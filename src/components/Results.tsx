@@ -28,8 +28,8 @@ const Results = ({ quizData, userAnswers, restartQuiz }: ResultsProps) => {
 
   const canVibrate = "vibrate" in navigator;
 
-  const successSound = new Audio("/sounds/success.mp3");
-  const failSound = new Audio("/sounds/fail.mp3");
+  const successSound = new Audio("/sounds/success.wav");
+  const failSound = new Audio("/sounds/fail.wav");
 
   useEffect(() => {
     // 🔊 Always play sound
