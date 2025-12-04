@@ -136,3 +136,24 @@ p {
   align-items: center;
   flex-direction: column;
 }
+
+.results-container.flash {
+  animation: flash UX 0.6s ease;
+}
+
+@keyframes flashUX {
+  0% {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1);
+  }
+
+  50% {
+    background-color: rgba(255, 213, 79, 0.15);
+    transform: scale(1.03);
+  }
+
+  100% {
+    background-color: transparent;
+    transform: scale(1);
+  }
+}
