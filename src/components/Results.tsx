@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface ResultsProps {
   quizData: {
@@ -11,12 +11,12 @@ interface ResultsProps {
 }
 
 const Results = ({ quizData, userAnswers, restartQuiz }: ResultsProps) => {
+  const [flash, setFlash] = useState(false);
+
   const getScore = () => {
     let finalScore = 0;
     userAnswers.forEach((answer, index) => {
-      if (answer === quizData[index].answer) {
-        finalScore++;
-      }
+      if (answer === quizData[index].answer) finalScore++;
     });
     return finalScore;
   };
@@ -26,33 +26,37 @@ const Results = ({ quizData, userAnswers, restartQuiz }: ResultsProps) => {
   const percentage = Math.round((score / quizData.length) * 100);
   const passed = percentage >= 50;
 
-  // 🔊 Sounds
-  const successSound = new Audio("/sounds/success.wav");
-  const failSound = new Audio("/sounds/fail.wav");
+  const canVibrate = "vibrate" in navigator;
+
+  const successSound = new Audio("/sounds/success.mp3");
+  const failSound = new Audio("/sounds/fail.mp3");
 
   useEffect(() => {
-    if (passed) {
-      successSound.play().catch(() => {});
-    } else {
-      failSound.play().catch(() => {});
-    }
+    // 🔊 Always play sound
+    passed ? successSound.play() : failSound.play();
 
     // 📳 Mobile vibration
-    if (navigator.vibrate) {
+    if (canVibrate) {
       navigator.vibrate(passed ? [200, 100, 200] : [400, 150, 400, 150, 400]);
+    }
+
+    // 🖥️ Desktop fallback
+    else {
+      setFlash(true);
+      setTimeout(() => setFlash(false), 600);
     }
   }, []);
 
   return (
-    <div>
+    <div className={`results-container ${flash ? "flash" : ""}`}>
       <h2>Quiz Completed 🥳</h2>
 
       <div className="center-results">
         <p>
-          Your Score: {score}/{quizData.length}
+          Score: {score}/{quizData.length}
         </p>
         <p>Unanswered: {unanswered}</p>
-        <p>Score: {percentage}%</p>
+        <p>{percentage}%</p>
 
         <p>
           {percentage >= 80
